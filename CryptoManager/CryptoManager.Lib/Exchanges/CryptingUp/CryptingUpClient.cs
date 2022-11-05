@@ -161,6 +161,41 @@ namespace CryptoManager.Lib.Exchanges.CryptingUp
             }
         }
 
+        public IList<Asset> GetAllAssets()
+        {
+            try
+            {
+                var assets = new List<Asset>();
+
+                for (string? start = null; start != "";)
+                {
+                    var response = GetQuery($"{BaseUrl}/assets", start ?? "");
+
+                    assets.AddRange(response["assets"] switch
+                    {
+                        null => throw new Exception($"{ErrorString} Assets list is null."),
+                        JObject => throw new Exception($"{ErrorString} Assets list is not an array."),
+                        _ => response["assets"]?.ToObject<List<Asset>>() ??
+                             throw new Exception($"{ErrorString}")
+                    });
+
+                    start = response["next"] == null
+                        ? throw new RequestException(
+                            "Unable to load query for assets.",
+                            response.ToString(Formatting.Indented
+                            ))
+                        : response["next"]?.ToObject<string>();
+                }
+
+                return assets;
+
+            }
+            catch (AggregateException e)
+            {
+                throw e.InnerException ?? new RequestException(ErrorString, "");
+            }
+        }
+
         public JObject GetQuery(string url, string startIndex)
         {
             try
