@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Reflection;
 using System.Security;
 using CryptoManager.Lib.Exceptions.CryptingUp;
@@ -98,9 +98,9 @@ namespace CryptoManager.Lib.Exchanges.CryptingUp
             {
                 var markets = new List<Market>();
 
-                for (var start = ""; start != "";)
+                for (string? start = null; start != "";)
                 {
-                    var response = GetQuery($"{BaseUrl}/exchanges/{exchangeId}/markets", start ?? "0");
+                    var response = GetQuery($"{BaseUrl}/exchanges/{exchangeId}/markets", start ?? "");
 
                     markets.AddRange(response["markets"] switch
                     {
