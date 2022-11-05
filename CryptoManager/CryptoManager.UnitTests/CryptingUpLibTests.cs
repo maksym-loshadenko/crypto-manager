@@ -161,5 +161,19 @@ namespace CryptoManager.UnitTests
             Assert.IsNotNull(result);
             Assert.IsTrue(result is RequestException);
         }
+
+        [TestMethod]
+        public void TestGetAssetsOverview()
+        {
+            var client = new CryptingUpClient();
+
+            var result = client.GetAssetsOverview();
+
+            TestContext.WriteLine(
+                JsonConvert.SerializeObject(result, Formatting.Indented)
+            );
+
+            Assert.IsNotNull(result);
+        }
     }
 }
