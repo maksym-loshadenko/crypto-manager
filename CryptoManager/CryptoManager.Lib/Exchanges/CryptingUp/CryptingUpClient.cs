@@ -216,6 +216,28 @@ namespace CryptoManager.Lib.Exchanges.CryptingUp
             }
         }
 
+        public IEnumerable<AssetOverview> GetAssetsOverview()
+        {
+            try
+            {
+                var response = MakeHttpRequest($"{BaseUrl}/assetsoverview").Result;
+
+                var responseObject = JObject.Parse(response);
+
+                return responseObject["assets"] switch
+                {
+                    null => throw new Exception($"{ErrorString} Assets overview list is null."),
+                    JObject => throw new Exception($"{ErrorString} Assets overview list is not an array."),
+                    _ => responseObject["assets"]?.ToObject<List<AssetOverview>>() ??
+                         throw new Exception($"{ErrorString}")
+                };
+            }
+            catch (AggregateException e)
+            {
+                throw e.InnerException ?? new RequestException(ErrorString, "");
+            }
+        }
+
         public JObject GetQuery(string url, string startIndex)
         {
             try
