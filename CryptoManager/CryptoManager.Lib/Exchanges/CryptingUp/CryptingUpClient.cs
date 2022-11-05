@@ -1,7 +1,10 @@
 ﻿using System.Net;
+using System.Reflection;
+using System.Security;
 using CryptoManager.Lib.Exceptions.CryptingUp;
 using CryptoManager.Lib.Exchanges.CryptingUp.Enums;
 using CryptoManager.Lib.Exchanges.CryptingUp.Models;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace CryptoManager.Lib.Exchanges.CryptingUp
@@ -54,7 +57,61 @@ namespace CryptoManager.Lib.Exchanges.CryptingUp
             }
         }
 
-        public async Task<string> MakeHttpRequest(string url, Dictionary<string, string>? parameters = null)
+        public IEnumerable<Market> GetAllMarkets()
+        {
+            try
+            {
+                var markets = new List<Market>();
+
+                for (var start = ""; start != "0";)
+                {
+                    var response = GetQuery($"{BaseUrl}/markets", start);
+
+                    markets.AddRange(response["markets"] switch
+                    {
+                        null => throw new Exception($"{ErrorString} Markets list is null."),
+                        JObject => throw new Exception($"{ErrorString} Markets list is not an array."),
+                        _ => response["markets"]?.ToObject<List<Market>>() ??
+                             throw new Exception($"{ErrorString}")
+                    });
+
+                    start = response["next"] == null
+                        ? throw new RequestException(
+                            "Unable to load query for markets.",
+                            response.ToString(Formatting.Indented
+                            ))
+                        : response["next"]?.ToObject<string>();
+                }
+
+                return markets;
+
+            }
+            catch (AggregateException e)
+            {
+                throw e.InnerException ?? new RequestException(ErrorString, "");
+            }
+        }
+
+        public JObject GetQuery(string url, string startIndex)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, string>()
+                {
+                    { "start", startIndex }
+                };
+
+                var response = MakeHttpRequest(url, parameters).Result;
+
+                return JObject.Parse(response);
+            }
+            catch (AggregateException e)
+            {
+                throw e.InnerException ?? new RequestException(ErrorString, "");
+            }
+        }
+
+        public static async Task<string> MakeHttpRequest(string url, Dictionary<string, string>? parameters = null)
         {
             var result = WebClient.WebGetRequest(url, parameters).Result;
 
