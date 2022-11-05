@@ -63,5 +63,15 @@ namespace CryptoManager.UnitTests
             Assert.IsNotNull(result);
             Assert.IsTrue(result is RequestException);
         }
+
+        [TestMethod]
+        public void TestGetAllMarkets()
+        {
+            var client = new CryptingUpClient();
+
+            var result = client.GetAllMarkets();
+
+            Assert.IsNotNull(result);
+        }
     }
 }
