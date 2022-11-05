@@ -96,5 +96,28 @@ namespace CryptoManager.UnitTests
             Assert.IsNotNull(result);
             Assert.IsTrue(!result.Any());
         }
+
+        [TestMethod]
+        public void TestGetAssetMarketsCorrect()
+        {
+            var client = new CryptingUpClient();
+            const string correctAssetName = "BTC";
+
+            var result = client.GetAssetMarkets(correctAssetName);
+
+            Assert.IsNotNull(result);
+        }
+
+        [TestMethod]
+        public void TestGetAssetMarketsIncorrect()
+        {
+            var client = new CryptingUpClient();
+            const string incorrectAssetName = "BT";
+
+            var result = client.GetAssetMarkets(incorrectAssetName);
+
+            Assert.IsNotNull(result);
+            Assert.IsTrue(!result.Any());
+        }
     }
 }
