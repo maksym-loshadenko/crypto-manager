@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Reflection;
 using System.Security;
 using CryptoManager.Lib.Exceptions.CryptingUp;
@@ -120,6 +120,40 @@ namespace CryptoManager.Lib.Exchanges.CryptingUp
 
                 return markets;
 
+            }
+            catch (AggregateException e)
+            {
+                throw e.InnerException ?? new RequestException(ErrorString, "");
+            }
+        }
+
+        public IEnumerable<Market> GetAssetMarkets(string assetId)
+        {
+            try
+            {
+                var markets = new List<Market>();
+
+                for (string? start = null; start != "";)
+                {
+                    var response = GetQuery($"{BaseUrl}/assets/{assetId}/markets", start ?? "0");
+
+                    markets.AddRange(response["markets"] switch
+                    {
+                        null => throw new Exception($"{ErrorString} Markets list is null."),
+                        JObject => throw new Exception($"{ErrorString} Markets list is not an array."),
+                        _ => response["markets"]?.ToObject<List<Market>>() ??
+                             throw new Exception($"{ErrorString}")
+                    });
+
+                    start = response["next"] == null
+                        ? throw new RequestException(
+                            "Unable to load query for markets.",
+                            response.ToString(Formatting.Indented
+                            ))
+                        : response["next"]?.ToObject<string>();
+                }
+
+                return markets;
             }
             catch (AggregateException e)
             {
