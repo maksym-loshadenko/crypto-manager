@@ -119,5 +119,15 @@ namespace CryptoManager.UnitTests
             Assert.IsNotNull(result);
             Assert.IsTrue(!result.Any());
         }
+
+        [TestMethod]
+        public void TestGetAllAssets()
+        {
+            var client = new CryptingUpClient();
+
+            var result = client.GetAllAssets();
+
+            Assert.IsNotNull(result);
+        }
     }
 }
