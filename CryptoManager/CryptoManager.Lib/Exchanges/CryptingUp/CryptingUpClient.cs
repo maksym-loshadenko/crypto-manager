@@ -63,9 +63,44 @@ namespace CryptoManager.Lib.Exchanges.CryptingUp
             {
                 var markets = new List<Market>();
 
-                for (var start = ""; start != "0";)
+                for (string? start = null; start != "";)
                 {
-                    var response = GetQuery($"{BaseUrl}/markets", start);
+                    var response = GetQuery($"{BaseUrl}/markets", start ?? "");
+
+                    markets.AddRange(response["markets"] switch
+                    {
+                        null => throw new Exception($"{ErrorString} Markets list is null."),
+                        JObject => throw new Exception($"{ErrorString} Markets list is not an array."),
+                        _ => response["markets"]?.ToObject<List<Market>>() ??
+                             throw new Exception($"{ErrorString}")
+                    });
+
+                    start = response["next"] == null
+                        ? throw new RequestException(
+                            "Unable to load query for markets.",
+                            response.ToString(Formatting.Indented
+                            ))
+                        : response["next"]?.ToObject<string>();
+                }
+
+                return markets;
+
+            }
+            catch (AggregateException e)
+            {
+                throw e.InnerException ?? new RequestException(ErrorString, "");
+            }
+        }
+
+        public IEnumerable<Market> GetExchangeMarkets(string exchangeId)
+        {
+            try
+            {
+                var markets = new List<Market>();
+
+                for (var start = ""; start != "";)
+                {
+                    var response = GetQuery($"{BaseUrl}/exchanges/{exchangeId}/markets", start ?? "0");
 
                     markets.AddRange(response["markets"] switch
                     {
