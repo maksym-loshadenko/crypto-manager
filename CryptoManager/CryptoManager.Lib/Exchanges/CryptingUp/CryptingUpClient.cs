@@ -1,6 +1,4 @@
 ﻿using System.Net;
-using System.Reflection;
-using System.Security;
 using CryptoManager.Lib.Exceptions.CryptingUp;
 using CryptoManager.Lib.Exchanges.CryptingUp.Enums;
 using CryptoManager.Lib.Exchanges.CryptingUp.Models;
@@ -9,12 +7,27 @@ using Newtonsoft.Json.Linq;
 
 namespace CryptoManager.Lib.Exchanges.CryptingUp
 {
+    /// <summary>
+    /// A <see href="https://cryptingup.com">CryptingUp</see> client, that makes requests
+    /// to the <see href="https://cryptingup.com/apidoc/">CryptingUp public API</see>.
+    /// </summary>
     public class CryptingUpClient
     {
+        /// <summary>
+        /// Base CryptingUp URL for all the rest API requests.
+        /// </summary>
         private const string BaseUrl = "https://cryptingup.com/api";
 
+        /// <summary>
+        /// Basic error string.
+        /// </summary>
         private const string ErrorString = "Unable to load exchanges list from the CryptingUp.";
 
+        /// <summary>
+        /// This is the endpoint of a <seealso href="https://cryptingup.com/apidoc/">CryptingUp API</seealso>,
+        /// that will return the list of all the available exchanges.
+        /// </summary>
+        /// <returns>A <see cref="IEnumerable{T}"/> of <see cref="Exchange"/> - all the available exchanges</returns>
         public IEnumerable<Exchange> GetAllExchanges()
         {
             try
@@ -37,6 +50,14 @@ namespace CryptoManager.Lib.Exchanges.CryptingUp
             }
         }
 
+        /// <summary>
+        /// This is the endpoint of a <seealso href="https://cryptingup.com/apidoc/">CryptingUp API</seealso>,
+        /// that will return a data of the specific exchanges. If exchange id received is invalid - an
+        /// <see cref="RequestException"/> is thrown.
+        /// </summary>
+        /// <param name="exchangeId">Id of the specific exchange</param>
+        /// <returns>A specific <see cref="Exchange"/> with the received id.</returns>
+        /// <exception cref="RequestException"/>
         public Exchange GetSpecificExchange(string exchangeId)
         {
             try
@@ -57,6 +78,13 @@ namespace CryptoManager.Lib.Exchanges.CryptingUp
             }
         }
 
+        /// <summary>
+        /// This is the endpoint of a <seealso href="https://cryptingup.com/apidoc/">CryptingUp API</seealso>,
+        /// that will return a list of all available markets.
+        /// </summary>
+        /// <returns>A <see cref="IEnumerable{T}"/> of <see cref="Market"/> - all the available markets</returns>
+        /// <exception cref="Exception"/>
+        /// <exception cref="RequestException"/>
         public IEnumerable<Market> GetAllMarkets()
         {
             try
@@ -92,6 +120,15 @@ namespace CryptoManager.Lib.Exchanges.CryptingUp
             }
         }
 
+        /// <summary>
+        /// This is the endpoint of a <seealso href="https://cryptingup.com/apidoc/">CryptingUp API</seealso>,
+        /// that will return a list of all available markets for the received exchange. If exchange id is invalid -
+        /// an empty list is returned.
+        /// </summary>
+        /// <param name="exchangeId">Exchange ids of markets needed.</param>
+        /// <returns>A <see cref="IEnumerable{T}"/> of <see cref="Market"/> - all the exchange's market.</returns>
+        /// <exception cref="Exception"/>
+        /// <exception cref="RequestException"/>
         public IEnumerable<Market> GetExchangeMarkets(string exchangeId)
         {
             try
@@ -127,6 +164,15 @@ namespace CryptoManager.Lib.Exchanges.CryptingUp
             }
         }
 
+        /// <summary>
+        /// This is the endpoint of a <seealso href="https://cryptingup.com/apidoc/">CryptingUp API</seealso>,
+        /// that will return a list of all available markets for the received asset. If exchange id is invalid -
+        /// an empty list is returned.
+        /// </summary>
+        /// <param name="assetId">Assets ids of markets needed.</param>
+        /// <returns>A <see cref="IEnumerable{T}"/> of <see cref="Market"/> - all the asset's market.</returns>
+        /// <exception cref="Exception"/>
+        /// <exception cref="RequestException"/>
         public IEnumerable<Market> GetAssetMarkets(string assetId)
         {
             try
@@ -161,6 +207,13 @@ namespace CryptoManager.Lib.Exchanges.CryptingUp
             }
         }
 
+        /// <summary>
+        /// This is the endpoint of a <seealso href="https://cryptingup.com/apidoc/">CryptingUp API</seealso>,
+        /// that will return the list of all the available assets.
+        /// </summary>
+        /// <returns>A <see cref="IEnumerable{T}"/> of <see cref="Asset"/> - all the asset's market.</returns>
+        /// <exception cref="Exception"/>
+        /// <exception cref="RequestException"/>
         public IList<Asset> GetAllAssets()
         {
             try
@@ -196,6 +249,14 @@ namespace CryptoManager.Lib.Exchanges.CryptingUp
             }
         }
 
+        /// <summary>
+        /// This is the endpoint of a <seealso href="https://cryptingup.com/apidoc/">CryptingUp API</seealso>,
+        /// that will return a data of the specific assets. If asset id received is invalid - an
+        /// <see cref="RequestException"/> is thrown.
+        /// </summary>
+        /// <param name="assetId">Id of the specific asset</param>
+        /// <returns>A specific <see cref="Asset"/> with the received id.</returns>
+        /// <exception cref="RequestException"/>
         public Asset GetSpecificAsset(string assetId)
         {
             try
@@ -216,6 +277,12 @@ namespace CryptoManager.Lib.Exchanges.CryptingUp
             }
         }
 
+        /// <summary>
+        /// This is the endpoint of a <seealso href="https://cryptingup.com/apidoc/">CryptingUp API</seealso>,
+        /// that will return a list of all available asset overviews.
+        /// </summary>
+        /// <returns>A <see cref="IEnumerable{T}"/> of all available <see cref="Asset"/>.</returns>
+        /// <exception cref="Exception"/>
         public IEnumerable<AssetOverview> GetAssetsOverview()
         {
             try
@@ -238,6 +305,15 @@ namespace CryptoManager.Lib.Exchanges.CryptingUp
             }
         }
 
+        /// <summary>
+        /// A method for paginated requests of the data from the CryptingUp API.
+        /// </summary>
+        /// <param name="url">Url of the request.</param>
+        /// <param name="startIndex">
+        /// Start index, that is needed for the request of the
+        /// next page in the pagination.
+        /// </param>
+        /// <returns>A <see cref="JObject"/> with the received JSON response.</returns>
         public JObject GetQuery(string url, string startIndex)
         {
             try
@@ -257,6 +333,16 @@ namespace CryptoManager.Lib.Exchanges.CryptingUp
             }
         }
 
+        /// <summary>
+        /// A universal method, that makes http requests to the received url
+        /// with the received parameters. If something is wrong and status code
+        /// of the request is not success - method parses an error and throws
+        /// a <see cref="RequestException"/> with problem details.
+        /// </summary>
+        /// <param name="url">Url of the request.</param>
+        /// <param name="parameters">Parameters of the request.</param>
+        /// <returns>A JSON string, received from the API after request.</returns>
+        /// <exception cref="RequestException"></exception>
         public static async Task<string> MakeHttpRequest(string url, Dictionary<string, string>? parameters = null)
         {
             var result = WebClient.WebGetRequest(url, parameters).Result;
@@ -269,6 +355,12 @@ namespace CryptoManager.Lib.Exchanges.CryptingUp
             throw new RequestException(ParseStatusCode(result.StatusCode), result.Content.ReadAsStringAsync().Result);
         }
 
+        /// <summary>
+        /// A method, that parses an error code, received after the web API request.
+        /// </summary>
+        /// <param name="statusCode">Status code of the error response.</param>
+        /// <returns>A text of the exception for the request response.</returns>
+        /// <exception cref="ArgumentOutOfRangeException"/>
         private static string ParseStatusCode(HttpStatusCode statusCode)
         {
             if (!Enum.IsDefined(typeof(CryptingUpError), (int)statusCode))

@@ -4,6 +4,14 @@ namespace CryptoManager.Lib
 {
     public class WebClient
     {
+        /// <summary>
+        /// Static method, that allows to make an http request to the received url with received url
+        /// parameters. It forms url with received url string and a dictionary of all the parameters
+        /// and their values.
+        /// </summary>
+        /// <param name="url">Url of the request.</param>
+        /// <param name="parameters">Parameters of the request.</param>
+        /// <returns>An <see cref="HttpResponseMessage"/>, formed after web request.</returns>
         public static async Task<HttpResponseMessage> WebGetRequest(string url, Dictionary<string, string>? parameters)
         {
             using var client = new HttpClient();
