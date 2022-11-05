@@ -73,5 +73,28 @@ namespace CryptoManager.UnitTests
 
             Assert.IsNotNull(result);
         }
+
+        [TestMethod]
+        public void TestGetExchangeMarketsCorrect()
+        {
+            var client = new CryptingUpClient();
+            const string correctExchangeName = "BINANCE";
+
+            var result = client.GetExchangeMarkets(correctExchangeName);
+
+            Assert.IsNotNull(result);
+        }
+
+        [TestMethod]
+        public void TestGetExchangeMarketsIncorrect()
+        {
+            var client = new CryptingUpClient();
+            const string incorrectExchangeName = "BNNC";
+
+            var result = client.GetExchangeMarkets(incorrectExchangeName);
+
+            Assert.IsNotNull(result);
+            Assert.IsTrue(!result.Any());
+        }
     }
 }
