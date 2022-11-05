@@ -3,6 +3,9 @@ using Newtonsoft.Json;
 
 namespace CryptoManager.Lib.Exchanges.CryptingUp.Models
 {
+    /// <summary>
+    /// Base class of all the CryptingUp classes
+    /// </summary>
     public class QuoteContainer
     {
         [JsonProperty("quote_data")]
@@ -35,7 +38,7 @@ namespace CryptoManager.Lib.Exchanges.CryptingUp.Models
             Quote.Add(new Quote(price, volume24h, marketCap, fullyDilutedMarketCap));
         }
 
-        private double? GetQuoteData(JObject quote, string fieldName, string currencyCode)
+        private static double? GetQuoteData(JObject quote, string fieldName, string currencyCode)
         {
             return quote[currencyCode] == null ? null :
                 quote[currencyCode]?[fieldName] == null ? null :

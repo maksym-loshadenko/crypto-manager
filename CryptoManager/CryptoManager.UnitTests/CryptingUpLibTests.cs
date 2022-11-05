@@ -1,6 +1,5 @@
 using CryptoManager.Lib.Exceptions.CryptingUp;
 using CryptoManager.Lib.Exchanges.CryptingUp;
-using CryptoManager.Lib.Exchanges.CryptingUp.Models;
 using Newtonsoft.Json;
 
 namespace CryptoManager.UnitTests
