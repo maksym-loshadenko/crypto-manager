@@ -196,6 +196,26 @@ namespace CryptoManager.Lib.Exchanges.CryptingUp
             }
         }
 
+        public Asset GetSpecificAsset(string assetId)
+        {
+            try
+            {
+                var response = MakeHttpRequest($"{BaseUrl}/assets/{assetId}").Result;
+
+                var responseObject = JObject.Parse(response);
+
+                return responseObject["asset"] switch
+                {
+                    null => throw new RequestException($"{ErrorString} Asset is null.", response),
+                    _ => responseObject["asset"]?.ToObject<Asset>() ?? throw new RequestException($"{ErrorString}", response)
+                };
+            }
+            catch (AggregateException e)
+            {
+                throw e.InnerException ?? new RequestException(ErrorString, "");
+            }
+        }
+
         public JObject GetQuery(string url, string startIndex)
         {
             try
